@@ -19,14 +19,19 @@ class ViewController: UIViewController {
     @IBOutlet weak var xValue: UILabel!
     @IBOutlet weak var yValue: UILabel!
     @IBOutlet weak var zValue: UILabel!
-    
-    let defaultDuration = 3.0
-    let defaultDamping = 0.25
-    let defaultVelocity = 2.5
+    @IBOutlet weak var topSpeed: UILabel!
     
     var xCalib : Double!
     var yCalib : Double!
     var zCalib : Double!
+    
+    var xVal : Double!
+    var yVal : Double!
+    var zVal : Double!
+    
+    var prevSpeed : Double!
+    var speed : Double!
+    var speedMultiplier = 100.0
     
     var manager: CMMotionManager = CMMotionManager()
     var attitude: CMAttitude = CMAttitude()
@@ -42,19 +47,38 @@ class ViewController: UIViewController {
         self.yCalib = 0.0
         self.zCalib = 0.0
         
-        manager.deviceMotionUpdateInterval = 0.01
+        self.prevSpeed = 0
+        self.speed = 0
+        
+        manager.deviceMotionUpdateInterval = 0.05
         manager.startDeviceMotionUpdates(to: OperationQueue.main, withHandler:{
             deviceManager, error in
+            
             self.motion = self.manager.deviceMotion!
             self.attitude = self.motion.attitude
             
-            self.ref.child("values").child("gyro").setValue(["x" : String(format: "%.6f", self.attitude.yaw - self.xCalib),
-                                                             "y" : String(format: "%.6f", self.attitude.roll - self.yCalib),
-                                                             "z" : String(format: "%.6f", self.attitude.pitch - self.zCalib)])
+            self.xVal = self.attitude.yaw * self.speedMultiplier
+            self.yVal = self.attitude.roll * self.speedMultiplier
+            self.zVal = self.attitude.pitch * self.speedMultiplier
             
-            self.xValue.text = "x: " + String(format: "%.3f", self.attitude.yaw - self.xCalib)
-            self.yValue.text = "y: " + String(format: "%.3f", self.attitude.roll - self.yCalib)
-            self.zValue.text = "z: " + String(format: "%.3f", self.attitude.pitch - self.zCalib)
+            if Int(self.yVal-self.prevSpeed) > Int(self.speed) {
+                if Int(self.yVal-self.prevSpeed) > 0 {
+                    self.speed = self.yVal-self.prevSpeed
+                    self.ref.child("values").setValue(["topSpeed" : String(format: "%.6f", self.speed)])
+                }
+            }
+            
+            self.prevSpeed = self.yVal
+            
+            self.topSpeed.text = "Top Speed: " + String(Int(self.speed))
+            
+            self.ref.child("values").child("gyro").setValue(["yaw" : String(format: "%.6f", self.xVal - self.xCalib),
+                                                             "roll" : String(format: "%.6f", self.yVal - self.yCalib),
+                                                             "pitch" : String(format: "%.6f", self.zVal - self.zCalib)])
+            
+            self.self.xValue.text = "Yaw: " + String(format: "%.3f", self.xVal - self.xCalib)
+            self.yValue.text = "Roll: " + String(format: "%.3f", self.yVal - self.yCalib)
+            self.zValue.text = "Pitch: " + String(format: "%.3f", self.zVal - self.zCalib)
         })
     }
 
@@ -64,25 +88,15 @@ class ViewController: UIViewController {
     }
     
     @IBAction func gyroCalibration(_ sender: AnyObject) {
-        self.xCalib = self.attitude.yaw
-        self.yCalib = self.attitude.roll
-        self.zCalib = self.attitude.pitch
-    }
-    
-    func animateButton() {
-        self.gyroButton.imageView?.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+        self.xCalib = self.xVal
+        self.yCalib = self.yVal
+        self.zCalib = self.zVal
         
-        UIView.animate(withDuration: defaultDuration,
-                       delay: 0,
-                       usingSpringWithDamping: CGFloat(defaultDamping),
-                       initialSpringVelocity: CGFloat(defaultVelocity),
-                       options: UIViewAnimationOptions.allowUserInteraction,
-                       animations: { self.gyroButton.imageView?.transform = CGAffineTransform.identity
-        },
-                       completion: { finished in
-                        self.animateButton()
-        }
-        )
+        self.prevSpeed = 0
+        self.speed = 0
+        self.speed = 0
+        
+        self.ref.child("values").setValue(["topSpeed" : String(format: "%.6f", 0.0)])
     }
 }
 
