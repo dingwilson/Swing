@@ -7,5 +7,6 @@ target 'Swing' do
 
   # Pods for Swing
   pod 'Firebase/Database'
+  pod 'Alamofire'
 
 end

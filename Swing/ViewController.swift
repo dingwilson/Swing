@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 import CoreMotion
+import AVFoundation
+import Alamofire
 
 class ViewController: UIViewController {
     
@@ -20,6 +22,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var yValue: UILabel!
     @IBOutlet weak var zValue: UILabel!
     @IBOutlet weak var topSpeed: UILabel!
+    
+    let defaultDuration = 3.0
+    let defaultDamping = 0.25
+    let defaultVelocity = 2.5
     
     var xCalib : Double!
     var yCalib : Double!
@@ -39,9 +45,12 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        animateButton()
         
         self.ref = FIRDatabase.database().reference()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(volumeChanged), name: NSNotification.Name(rawValue: "AVSystemController_SystemVolumeDidChangeNotification"), object: nil)
         
         self.xCalib = 0.0
         self.yCalib = 0.0
@@ -70,7 +79,7 @@ class ViewController: UIViewController {
             
             self.prevSpeed = self.yVal
             
-            self.topSpeed.text = "Top Speed: " + String(Int(self.speed))
+            self.topSpeed.text = String(Int(self.speed))
             
             self.ref.child("values").child("gyro").setValue(["yaw" : String(format: "%.6f", self.xVal - self.xCalib),
                                                              "roll" : String(format: "%.6f", self.yVal - self.yCalib),
@@ -82,21 +91,45 @@ class ViewController: UIViewController {
         })
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func gyroCalibration(_ sender: AnyObject) {
+        resetValues()
     }
     
-    @IBAction func gyroCalibration(_ sender: AnyObject) {
+    func animateButton() {
+        self.gyroButton.imageView?.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+        
+        UIView.animate(withDuration: defaultDuration,
+                       delay: 0,
+                       usingSpringWithDamping: CGFloat(defaultDamping),
+                       initialSpringVelocity: CGFloat(defaultVelocity),
+                       options: UIViewAnimationOptions.allowUserInteraction,
+                       animations: { self.gyroButton.imageView?.transform = CGAffineTransform.identity
+        },
+                       completion: { finished in
+                        self.animateButton()
+        }
+        )
+    }
+    
+    func resetValues() {
         self.xCalib = self.xVal
         self.yCalib = self.yVal
         self.zCalib = self.zVal
+        
+        let url = URL(string: "http://flask-env.czkykzdpwg.us-west-2.elasticbeanstalk.com/\(Int(self.speed))")
+        print(url)
+        
+        Alamofire.request(url!, method: .get)
         
         self.prevSpeed = 0
         self.speed = 0
         self.speed = 0
         
         self.ref.child("values").setValue(["topSpeed" : String(format: "%.6f", 0.0)])
+    }
+    
+    func volumeChanged(notification: Notification) {
+        resetValues()
     }
 }
 
