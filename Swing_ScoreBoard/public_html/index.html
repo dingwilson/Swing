@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#308AFC">
+
+        <title>Swing</title>
+        
+    </head>
+    <body style="background-color: #308AFC" ng-app="swing">
+        <div class="container" ng-controller="swingCtrl">
+                <br/><br/>
+        <div class="row">
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-image">
+              <img src="second.png">
+            </div>
+            <div class="card-content">
+              <p>{{record['second'].current}}</p>
+              <p>{{record['second'].score}}</p>
+            </div>
+            <div class="card-action">
+              <h4 align="center">Second Place</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-image">
+              <img src="first.png">
+            </div>
+            <div class="card-content">
+              <p>{{record['first'].current}}</p>
+              <p>{{record['first'].score}}</p>
+            </div>
+            <div class="card-action">
+              <h4 align="center">First Place</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-image">
+              <img src="third.png">
+            </div>
+            <div class="card-content">
+              <p>{{record['third'].current}}</p>
+              <p>{{record['third'].score}}</p>
+            </div>
+            <div class="card-action">
+              <h4 align="center">Third Place</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+          <!-- Compiled and minified CSS -->
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+
+          <!-- Compiled and minified JavaScript -->
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+          <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+        <!-- Firebase -->
+        <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+
+        <!-- AngularFire -->
+        <script src="https://cdn.firebase.com/libs/angularfire/2.1.0/angularfire.min.js"></script>
+        <script>
+             // Initialize Firebase
+             var config = {
+               apiKey: "AIzaSyA8AZvjzZEATcU8bvFREP-EtWy-J4jcp-8",
+               authDomain: "swing-c93c1.firebaseapp.com",
+               databaseURL: "https://swing-c93c1.firebaseio.com",
+               storageBucket: "swing-c93c1.appspot.com",
+               messagingSenderId: "912102662226"
+             };
+             firebase.initializeApp(config);
+            </script>
+        <script src="app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<!--
+	Identity by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html ng-app="swing">
+	<head>
+		<title>Swing</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-loading" ng-controller="swingCtrl">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" ng-hide="nextStep">
+						<header>
+							<span class="avatar"><img src="images/avatar.jpg" alt="" /></span>
+							<h1>Swing</h1>
+							<p>Give Me a Swing</p>
+						</header>
+						<input ng-model="data.current" placeholder="Email"></input><br/>
+						<br/>
+							<input type="submit" ng-click="beginSwing()" value="Swing">
+						</section>
+				<!-- Footer -->
+					<footer id="footer">
+						<ul class="copyright">
+							<li>&copy; Team Swing</li>
+						</ul>
+					</footer>
+
+					<section id="main" ng-show="nextStep">
+						X: {{gyro.pitch}}
+						Y: {{gyro.roll}}
+						Z: {{gyro.yaw}}
+
+						<h3>Current Score: {{data.score}}</h3>
+						
+						</section>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<ul class="copyright">
+							<li>&copy; Team Swing</li>
+						</ul>
+					</footer>
+			</div>
+
+		<!-- Scripts -->
+			<!--[if lte IE 8]><script src="assets/js/respond.min.js"></script><![endif]-->
+			<script>
+				if ('addEventListener' in window) {
+					window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
+					document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+				}
+			</script>
+
+			<!-- AngularJS -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+
+		<!-- AngularFire -->
+		<script src="https://cdn.firebase.com/libs/angularfire/2.1.0/angularfire.min.js"></script>
+		<script>
+			 // Initialize Firebase
+			 var config = {
+			   apiKey: "AIzaSyA8AZvjzZEATcU8bvFREP-EtWy-J4jcp-8",
+			   authDomain: "swing-c93c1.firebaseapp.com",
+			   databaseURL: "https://swing-c93c1.firebaseio.com",
+			   storageBucket: "swing-c93c1.appspot.com",
+			   messagingSenderId: "912102662226"
+			 };
+			 firebase.initializeApp(config);
+			</script>
+		<script src="assets/js/app.js"></script>
+	</body>
+</html>
